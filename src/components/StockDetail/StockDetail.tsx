@@ -3,6 +3,7 @@ import { Grid, Tooltip, Typography } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { StyledButton } from "./styles";
+import { Chart } from "./components";
 
 const intervals: Array<{ interval: number; tooltip: string }> = [
   { interval: 5, tooltip: "5 minutos" },
@@ -44,6 +45,7 @@ const StockDetail: FunctionComponent = () => {
         <Grid display="flex" gap={1}>
           {intervals.map(({ interval, tooltip }) => (
             <Tooltip
+              key={interval}
               title={
                 <Typography variant="caption" sx={{ color: "#f2f2f2" }}>
                   {tooltip}
@@ -52,7 +54,6 @@ const StockDetail: FunctionComponent = () => {
               arrow
             >
               <StyledButton
-                key={interval}
                 variant="contained"
                 onClick={() => handleVariant("realTime")}
                 sx={{
@@ -75,6 +76,10 @@ const StockDetail: FunctionComponent = () => {
             <DatePicker label="Hasta" format="DD/MM/YYYY" />
           </LocalizationProvider>
         </Grid>
+      </Grid>
+
+      <Grid width="100%">
+        <Chart />
       </Grid>
     </Grid>
   );

@@ -84,6 +84,7 @@ const StockTable: FunctionComponent = () => {
             <TableRow>
               {tableHeaders.map(({ header }) => (
                 <StyledTableCell
+                  key={header}
                   align="left"
                   sx={{
                     fontSize: "18px",
@@ -99,7 +100,7 @@ const StockTable: FunctionComponent = () => {
 
           <TableBody>
             {rows.map((row, idx) => (
-              <StyledTableRow key={row.name}>
+              <StyledTableRow key={row.name + idx}>
                 <StyledTableCell align="left">
                   <Link to={`/detail/${idx}`}>{row.name}</Link>
                 </StyledTableCell>
