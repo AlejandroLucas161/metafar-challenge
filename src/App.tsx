@@ -1,7 +1,7 @@
-import { AppBar, Typography } from "@mui/material";
+import { AppBar, Container, Typography } from "@mui/material";
 import { FunctionComponent } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { StockTable } from "./components";
+import { StockDetail, StockTable } from "./components";
 
 const App: FunctionComponent = () => {
   return (
@@ -20,10 +20,12 @@ const App: FunctionComponent = () => {
         </Typography>
       </AppBar>
 
-      <Routes>
-        <Route path="/" element={<StockTable />} />
-        <Route path={"/detail/:id"} element={<>DETAIL</>} />
-      </Routes>
+      <Container maxWidth="lg" sx={{ marginTop: "24px" }}>
+        <Routes>
+          <Route path="/" element={<StockTable />} />
+          <Route path={"/detail/:id"} element={<StockDetail />} />
+        </Routes>
+      </Container>
     </BrowserRouter>
   );
 };

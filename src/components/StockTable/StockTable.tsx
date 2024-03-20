@@ -7,7 +7,6 @@ import {
   TableContainer,
   TableHead,
   Stack,
-  Container,
   Autocomplete,
 } from "@mui/material";
 import { StyledTableCell, StyledTableRow, StyledTextField } from "./styles";
@@ -37,6 +36,13 @@ const StockTable: FunctionComponent = () => {
     createData("NFLX", "A", "B", "C", "D"),
     createData("NFLX", "A", "B", "C", "D"),
     createData("NFLX", "A", "B", "C", "D"),
+    createData("NFLX", "A", "B", "C", "D"),
+    createData("NFLX", "A", "B", "C", "D"),
+    createData("NFLX", "A", "B", "C", "D"),
+    createData("NFLX", "A", "B", "C", "D"),
+    createData("NFLX", "A", "B", "C", "D"),
+    createData("NFLX", "A", "B", "C", "D"),
+    createData("NFLX", "A", "B", "C", "D"),
   ];
 
   const top100Films = [
@@ -50,7 +56,7 @@ const StockTable: FunctionComponent = () => {
   // DELETE THIS
 
   return (
-    <Container maxWidth="lg" sx={{ marginTop: "18px" }}>
+    <>
       {/* INPUT */}
       <Stack spacing={2} sx={{ width: "100%" }}>
         <Autocomplete
@@ -68,7 +74,7 @@ const StockTable: FunctionComponent = () => {
       {/* TABLE */}
       <TableContainer
         sx={{
-          marginTop: "16px",
+          marginTop: "8px",
           border: "2px solid #969696",
           borderRadius: "8px",
         }}
@@ -92,10 +98,10 @@ const StockTable: FunctionComponent = () => {
           </TableHead>
 
           <TableBody>
-            {rows.map((row) => (
+            {rows.map((row, idx) => (
               <StyledTableRow key={row.name}>
                 <StyledTableCell align="left">
-                  <Link to={`/detail/${0}`}>{row.name}</Link>
+                  <Link to={`/detail/${idx}`}>{row.name}</Link>
                 </StyledTableCell>
                 <StyledTableCell align="left">{row.calories}</StyledTableCell>
                 <StyledTableCell align="left">{row.fat}</StyledTableCell>
@@ -105,7 +111,7 @@ const StockTable: FunctionComponent = () => {
           </TableBody>
         </Table>
       </TableContainer>
-    </Container>
+    </>
   );
 };
 
