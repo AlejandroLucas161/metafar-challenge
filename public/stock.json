@@ -1,0 +1,9 @@
+{
+  "symbol": "TSLA",
+  "name": "Tesla Inc",
+  "currency": "USD",
+  "exchange": "NASDAQ",
+  "mic_code": "XNGS",
+  "country": "United States",
+  "type": "Common Stock"
+}

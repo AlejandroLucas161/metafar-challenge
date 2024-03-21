@@ -4,6 +4,8 @@ import { Icon, StyledButton } from "./styles";
 import { Chart, Intervals, Historical } from "./components";
 import candleChartIcon from "../../assets/candle-chart-icon.svg";
 import timeChartIcon from "../../assets/time-chart-icon.svg";
+import { useStockDetails } from "../../hooks/useStockDetails";
+import { useStock } from "../../hooks/useStock";
 
 export type StockVariant = "realTime" | "historical";
 export type ChartType = "candlestick" | "area";
@@ -14,8 +16,12 @@ const charts: Array<{ icon: string; chart: ChartType }> = [
 ];
 
 const StockDetail: FunctionComponent = () => {
+  const { data: stockDetail } = useStock();
+  const { data: stockChartDetails } = useStockDetails();
   const [variant, setVariant] = useState<StockVariant>("realTime");
   const [chartType, setChartType] = useState<ChartType>("candlestick");
+
+  const stockHeader = `${stockDetail?.name} / ${stockDetail?.symbol} / ${stockDetail?.currency}`;
 
   const handleStockVariant = (variant: StockVariant) => {
     setVariant(variant);
@@ -28,7 +34,7 @@ const StockDetail: FunctionComponent = () => {
   return (
     <Grid container gap={5}>
       <Grid width="100%" display="flex" justifyContent="space-between">
-        <Typography variant="h5">Netfilx / NFLX / EUR</Typography>
+        <Typography variant="h5">{stockHeader}</Typography>
 
         <Grid>
           <StyledButton
@@ -76,7 +82,7 @@ const StockDetail: FunctionComponent = () => {
       </Grid>
 
       <Grid width="100%">
-        <Chart chart={chartType} />
+        <Chart chart={chartType} values={stockChartDetails?.values || []} />
       </Grid>
     </Grid>
   );

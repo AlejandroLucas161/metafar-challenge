@@ -41,7 +41,7 @@ const App: FunctionComponent = () => {
         </Typography>
       </AppBar>
 
-      <Container maxWidth="lg" sx={{ marginTop: "24px" }}>
+      <Container maxWidth="lg" sx={{ marginTop: "20px" }}>
         <Routes>
           <Route path="/" element={<StockTable />} />
           <Route path={"/detail/:id"} element={<StockDetail />} />
