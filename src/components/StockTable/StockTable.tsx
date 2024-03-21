@@ -8,8 +8,10 @@ import {
   TableHead,
   Stack,
   Autocomplete,
+  Skeleton,
 } from "@mui/material";
 import { StyledTableCell, StyledTableRow, StyledTextField } from "./styles";
+import { useGetStocks } from "../../hooks/useGetStocks";
 
 const tableHeaders: Array<{ header: string }> = [
   { header: "Símbolo" },
@@ -19,40 +21,10 @@ const tableHeaders: Array<{ header: string }> = [
 ];
 
 const StockTable: FunctionComponent = () => {
+  const { data, isLoading } = useGetStocks();
+
   // DELETE THIS
-  function createData(
-    name: string,
-    calories: string,
-    fat: string,
-    carbs: string,
-    protein: string
-  ) {
-    return { name, calories, fat, carbs, protein };
-  }
-
-  const rows = [
-    createData("NFLX", "A", "B", "C", "D"),
-    createData("NFLX", "A", "B", "C", "D"),
-    createData("NFLX", "A", "B", "C", "D"),
-    createData("NFLX", "A", "B", "C", "D"),
-    createData("NFLX", "A", "B", "C", "D"),
-    createData("NFLX", "A", "B", "C", "D"),
-    createData("NFLX", "A", "B", "C", "D"),
-    createData("NFLX", "A", "B", "C", "D"),
-    createData("NFLX", "A", "B", "C", "D"),
-    createData("NFLX", "A", "B", "C", "D"),
-    createData("NFLX", "A", "B", "C", "D"),
-    createData("NFLX", "A", "B", "C", "D"),
-  ];
-
-  const top100Films = [
-    { title: "The Shawshank Redemption", year: 1994 },
-    { title: "The Godfather", year: 1972 },
-    { title: "The Godfather: Part II", year: 1974 },
-    { title: "The Dark Knight", year: 2008 },
-    { title: "12 Angry Men", year: 1957 },
-    { title: "Schindler's List", year: 1993 },
-  ];
+  const mockData = data?.slice(0, 12);
   // DELETE THIS
 
   return (
@@ -61,7 +33,7 @@ const StockTable: FunctionComponent = () => {
       <Stack spacing={2} sx={{ width: "100%" }}>
         <Autocomplete
           freeSolo
-          options={top100Films.map((option) => option.title)}
+          options={mockData?.map(({ name }) => name) || []}
           renderInput={(params) => (
             <StyledTextField
               {...params}
@@ -99,16 +71,35 @@ const StockTable: FunctionComponent = () => {
           </TableHead>
 
           <TableBody>
-            {rows.map((row, idx) => (
-              <StyledTableRow key={row.name + idx}>
-                <StyledTableCell align="left">
-                  <Link to={`/detail/${idx}`}>{row.name}</Link>
-                </StyledTableCell>
-                <StyledTableCell align="left">{row.calories}</StyledTableCell>
-                <StyledTableCell align="left">{row.fat}</StyledTableCell>
-                <StyledTableCell align="left">{row.carbs}</StyledTableCell>
-              </StyledTableRow>
-            ))}
+            {isLoading
+              ? Array(12)
+                  .fill({})
+                  .map((_, idx) => (
+                    <StyledTableRow key={idx * 2}>
+                      <StyledTableCell align="left">
+                        <Skeleton variant="rounded" width={50} height={16} />
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        <Skeleton variant="rounded" width={410} height={16} />
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        <Skeleton variant="rounded" width={50} height={16} />
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        <Skeleton variant="rounded" width={50} height={16} />
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  ))
+              : mockData?.map(({ symbol, name, currency, type, mic_code }) => (
+                  <StyledTableRow key={mic_code + symbol}>
+                    <StyledTableCell align="left">
+                      <Link to={`/detail/${symbol}`}>{symbol}</Link>
+                    </StyledTableCell>
+                    <StyledTableCell align="left">{name}</StyledTableCell>
+                    <StyledTableCell align="left">{currency}</StyledTableCell>
+                    <StyledTableCell align="left">{type}</StyledTableCell>
+                  </StyledTableRow>
+                ))}
           </TableBody>
         </Table>
       </TableContainer>
