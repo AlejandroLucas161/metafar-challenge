@@ -5,10 +5,13 @@ import { Chart, Intervals, Historical } from "./components";
 import { useStockDetails } from "../../hooks/useStockDetails";
 import { useStock } from "../../hooks/useStock";
 import { IntervalsType } from "../../types";
+import { Dayjs } from "dayjs";
 
 export type StockVariant = "realTime" | "historical";
 
 const StockDetail: FunctionComponent = () => {
+  const [startDate, setStartDate] = useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [interval, setInterval] = useState<IntervalsType>(1);
   const [variant, setVariant] = useState<StockVariant>("realTime");
   const { data: stockDetail } = useStock();
@@ -22,6 +25,14 @@ const StockDetail: FunctionComponent = () => {
 
   const handleIntervalChange = (interval: IntervalsType) => {
     setInterval(interval);
+  };
+
+  const handleStartDateChange = (date: Dayjs | null) => {
+    setStartDate(date);
+  };
+
+  const handleEndDateChange = (date: Dayjs | null) => {
+    setEndDate(date);
   };
 
   return (
@@ -58,7 +69,14 @@ const StockDetail: FunctionComponent = () => {
             />
           )}
 
-          {variant === "historical" && <Historical />}
+          {variant === "historical" && (
+            <Historical
+              startDateValue={startDate}
+              onStartDateChange={handleStartDateChange}
+              endDateValue={endDate}
+              onEndDateChange={handleEndDateChange}
+            />
+          )}
         </Grid>
       </Grid>
 

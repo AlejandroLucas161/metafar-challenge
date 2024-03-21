@@ -1,14 +1,39 @@
 import { FunctionComponent } from "react";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { Dayjs } from "dayjs";
 
-const Historical: FunctionComponent = () => {
+type HistoricalProps = {
+  startDateValue: Dayjs | null;
+  onStartDateChange: (date: Dayjs | null) => void;
+  endDateValue: Dayjs | null;
+  onEndDateChange: (date: Dayjs | null) => void;
+};
+
+const Historical: FunctionComponent<HistoricalProps> = ({
+  startDateValue,
+  onStartDateChange,
+  endDateValue,
+  onEndDateChange,
+}) => {
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DatePicker label="Desde" format="DD/MM/YYYY" />
+        <DateTimePicker
+          label="Desde"
+          value={startDateValue}
+          maxDate={endDateValue}
+          format="DD/MM/YYYY hh:mm A"
+          onChange={(date) => onStartDateChange(date)}
+        />
 
-        <DatePicker label="Hasta" format="DD/MM/YYYY" />
+        <DateTimePicker
+          label="Hasta"
+          value={endDateValue}
+          minDate={startDateValue}
+          format="DD/MM/YYYY hh:mm A"
+          onChange={(date) => onEndDateChange(date)}
+        />
       </LocalizationProvider>
     </>
   );
