@@ -1,17 +1,15 @@
 import Highcharts from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
 import { FunctionComponent } from "react";
-import { ChartType } from "../../StockDetail";
 import { IStockValue } from "../../../../types";
 
 type ChartProps = {
-  chart: ChartType;
   values: Array<IStockValue>;
 };
 
-const Chart: FunctionComponent<ChartProps> = ({ chart, values }) => {
+const Chart: FunctionComponent<ChartProps> = ({ values }) => {
   const data = values.map((value) => [
-    new Date(value.datetime).getTime(), // Convert datetime to timestamp
+    new Date(value.datetime).getTime(),
     parseFloat(value.open),
     parseFloat(value.high),
     parseFloat(value.low),
@@ -41,26 +39,13 @@ const Chart: FunctionComponent<ChartProps> = ({ chart, values }) => {
       enabled: false,
     },
 
-    // Opciones para el area chart
-    plotOptions: {
-      area: {
-        fillColor: {
-          linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-          stops: [
-            [0, "blue"],
-            [1, "rgba(0,0,0,0)"],
-          ],
-        },
-      },
-    },
-
     // Setea el tipo de gráfico, su nombre y los datos
     series: [
       {
-        type: chart,
+        type: "line",
         name: "Stock chart",
-        color: "blue", // Color de subida de gráfico candlestick
-        upColor: "red", // Color de bajada de gráfico candlestick
+        color: "#00CA73", // Color de subida de gráfico candlestick
+        upColor: "#FF6960", // Color de bajada de gráfico candlestick
         data: data,
       },
     ],

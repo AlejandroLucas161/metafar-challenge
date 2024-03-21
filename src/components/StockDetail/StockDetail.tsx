@@ -1,25 +1,18 @@
 import { FunctionComponent, useState } from "react";
 import { Grid, Typography } from "@mui/material";
-import { Icon, StyledButton } from "./styles";
+import { StyledButton } from "./styles";
 import { Chart, Intervals, Historical } from "./components";
-import candleChartIcon from "../../assets/candle-chart-icon.svg";
-import timeChartIcon from "../../assets/time-chart-icon.svg";
 import { useStockDetails } from "../../hooks/useStockDetails";
 import { useStock } from "../../hooks/useStock";
+import { IntervalsType } from "../../types";
 
 export type StockVariant = "realTime" | "historical";
-export type ChartType = "candlestick" | "area";
-
-const charts: Array<{ icon: string; chart: ChartType }> = [
-  { icon: candleChartIcon, chart: "candlestick" },
-  { icon: timeChartIcon, chart: "area" },
-];
 
 const StockDetail: FunctionComponent = () => {
-  const { data: stockDetail } = useStock();
-  const { data: stockChartDetails } = useStockDetails();
+  const [interval, setInterval] = useState<IntervalsType>(1);
   const [variant, setVariant] = useState<StockVariant>("realTime");
-  const [chartType, setChartType] = useState<ChartType>("candlestick");
+  const { data: stockDetail } = useStock();
+  const { data: stockChartDetails } = useStockDetails(interval);
 
   const stockHeader = `${stockDetail?.name} / ${stockDetail?.symbol} / ${stockDetail?.currency}`;
 
@@ -27,8 +20,8 @@ const StockDetail: FunctionComponent = () => {
     setVariant(variant);
   };
 
-  const handleChart = (chart: ChartType) => {
-    setChartType(chart);
+  const handleIntervalChange = (interval: IntervalsType) => {
+    setInterval(interval);
   };
 
   return (
@@ -55,34 +48,22 @@ const StockDetail: FunctionComponent = () => {
       </Grid>
 
       <Grid width="100%" display="flex" justifyContent="space-between">
-        <Grid display="flex" gap={1}>
-          {charts.map(({ icon, chart }, idx) => (
-            <StyledButton
-              key={idx}
-              variant="contained"
-              disabled={chart === chartType}
-              sx={{
-                minWidth: "56px",
-                minHeight: "56px",
-                padding: "0",
-                fontSize: "18px",
-              }}
-              onClick={() => handleChart(chart)}
-            >
-              <Icon src={icon} />
-            </StyledButton>
-          ))}
-        </Grid>
+        <Grid display="flex" gap={1}></Grid>
 
         <Grid>
-          {variant === "realTime" && <Intervals />}
+          {variant === "realTime" && (
+            <Intervals
+              intervalValue={interval}
+              onIntervalChange={handleIntervalChange}
+            />
+          )}
 
           {variant === "historical" && <Historical />}
         </Grid>
       </Grid>
 
       <Grid width="100%">
-        <Chart chart={chartType} values={stockChartDetails?.values || []} />
+        <Chart values={stockChartDetails?.values || []} />
       </Grid>
     </Grid>
   );

@@ -1,14 +1,18 @@
-import { Grid, Tooltip, Typography } from "@mui/material";
 import { FunctionComponent } from "react";
+import { Grid, Tooltip, Typography } from "@mui/material";
 import { StyledButton } from "../../styles";
+import { IntervalsType } from "../../../../types";
 
-const intervalsTimes: Array<{ interval: number; tooltip: string }> = [
+const intervalsTimes: Array<{ interval: IntervalsType; tooltip: string }> = [
+  { interval: 1, tooltip: "1 minutos" },
   { interval: 5, tooltip: "5 minutos" },
-  { interval: 10, tooltip: "10 minutos" },
   { interval: 15, tooltip: "15 minutos" },
 ];
 
-const Intervals: FunctionComponent = () => {
+const Intervals: FunctionComponent<{
+  intervalValue: IntervalsType;
+  onIntervalChange: (interval: IntervalsType) => void;
+}> = ({ intervalValue, onIntervalChange }) => {
   return (
     <Grid display="flex" gap={1}>
       {intervalsTimes.map(({ interval, tooltip }) => (
@@ -29,6 +33,8 @@ const Intervals: FunctionComponent = () => {
               padding: "0",
               fontSize: "18px",
             }}
+            disabled={interval === intervalValue}
+            onClick={() => onIntervalChange(interval)}
           >
             {interval}
           </StyledButton>

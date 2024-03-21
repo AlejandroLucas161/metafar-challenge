@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { ChangeEvent, FunctionComponent, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Table,
@@ -6,13 +6,12 @@ import {
   TableBody,
   TableContainer,
   TableHead,
-  Stack,
-  Autocomplete,
   Skeleton,
   Pagination,
 } from "@mui/material";
-import { StyledTableCell, StyledTableRow, StyledTextField } from "./styles";
+import { StyledTableCell, StyledTableRow } from "./styles";
 import { useStocksList } from "../../hooks/useStocksList";
+import StockAutocomplete from "./StockAutocomplete/StockAutocomplete";
 
 const tableHeaders: Array<{ header: string }> = [
   { header: "Símbolo" },
@@ -23,26 +22,28 @@ const tableHeaders: Array<{ header: string }> = [
 
 const StockTable: FunctionComponent = () => {
   const { data, isLoading } = useStocksList();
+  const [page, setPage] = useState<number>(1);
 
-  // DELETE THIS
-  const mockData = data?.slice(0, 12);
-  // DELETE THIS
+  const limit = 12;
+  const count = !!data?.length && Math.ceil(data?.length / 12);
+
+  const autocompleteList = data?.map((stock) => ({
+    label: stock.name,
+    id: stock.symbol,
+  }));
+
+  const tableEnds = page * limit;
+  const tableStarts = tableEnds - limit;
+  const stocks = data?.slice(tableStarts, tableEnds);
+
+  const handlePage = (_: ChangeEvent<unknown>, page: number) => {
+    setPage(page);
+  };
 
   return (
     <>
       {/* INPUT */}
-      <Stack spacing={2} sx={{ width: "100%" }}>
-        <Autocomplete
-          freeSolo
-          options={mockData?.map(({ name }) => name) || []}
-          renderInput={(params) => (
-            <StyledTextField
-              {...params}
-              placeholder="Busca la acción por nombre o símbolo..."
-            />
-          )}
-        />
-      </Stack>
+      <StockAutocomplete options={autocompleteList} />
 
       {/* TABLE */}
       <TableContainer
@@ -92,7 +93,7 @@ const StockTable: FunctionComponent = () => {
                       </StyledTableCell>
                     </StyledTableRow>
                   ))
-              : mockData?.map(({ symbol, name, currency, type, mic_code }) => (
+              : stocks?.map(({ symbol, name, currency, type, mic_code }) => (
                   <StyledTableRow key={mic_code + symbol}>
                     <StyledTableCell align="left">
                       <Link to={`/detail/${symbol}`}>{symbol}</Link>
@@ -106,7 +107,13 @@ const StockTable: FunctionComponent = () => {
         </Table>
       </TableContainer>
 
-      <Pagination count={20} sx={{ width: "fit-content", margin: "0 auto" }} />
+      {count && (
+        <Pagination
+          count={count}
+          onChange={handlePage}
+          sx={{ width: "fit-content", margin: "0 auto" }}
+        />
+      )}
     </>
   );
 };

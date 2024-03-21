@@ -1,3 +1,7 @@
+export type IntervalsType = 1 | 5 | 15;
+
+/* ------------------------------------------ */
+
 export interface IStock {
   symbol: string;
   name: string;
