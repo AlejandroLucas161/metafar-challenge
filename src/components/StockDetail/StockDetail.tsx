@@ -1,14 +1,13 @@
 import { FunctionComponent, useState } from "react";
-import { Grid, Tooltip, Typography } from "@mui/material";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { StyledButton } from "./styles";
-import { Chart } from "./components";
+import { Grid, Typography } from "@mui/material";
+import { Icon, StyledButton } from "./styles";
+import { Chart, Intervals, Historical } from "./components";
+import candleChartIcon from "../../assets/candle-chart-icon.svg";
+import timeChartIcon from "../../assets/time-chart-icon.svg";
 
-const intervals: Array<{ interval: number; tooltip: string }> = [
-  { interval: 5, tooltip: "5 minutos" },
-  { interval: 10, tooltip: "10 minutos" },
-  { interval: 15, tooltip: "15 minutos" },
+const charts: Array<{ icon: string }> = [
+  { icon: candleChartIcon },
+  { icon: timeChartIcon },
 ];
 
 const StockDetail: FunctionComponent = () => {
@@ -43,38 +42,26 @@ const StockDetail: FunctionComponent = () => {
 
       <Grid width="100%" display="flex" justifyContent="space-between">
         <Grid display="flex" gap={1}>
-          {intervals.map(({ interval, tooltip }) => (
-            <Tooltip
-              key={interval}
-              title={
-                <Typography variant="caption" sx={{ color: "#f2f2f2" }}>
-                  {tooltip}
-                </Typography>
-              }
-              arrow
+          {charts.map(({ icon }, idx) => (
+            <StyledButton
+              key={idx}
+              variant="contained"
+              sx={{
+                minWidth: "56px",
+                minHeight: "56px",
+                padding: "0",
+                fontSize: "18px",
+              }}
             >
-              <StyledButton
-                variant="contained"
-                onClick={() => handleVariant("realTime")}
-                sx={{
-                  minWidth: "56px",
-                  minHeight: "fit-content",
-                  padding: "0",
-                  fontSize: "16px",
-                }}
-              >
-                {interval}
-              </StyledButton>
-            </Tooltip>
+              <Icon icon={icon} />
+            </StyledButton>
           ))}
         </Grid>
 
         <Grid>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker label="Desde" format="DD/MM/YYYY" />
+          {variant === "realTime" && <Intervals />}
 
-            <DatePicker label="Hasta" format="DD/MM/YYYY" />
-          </LocalizationProvider>
+          {variant === "historical" && <Historical />}
         </Grid>
       </Grid>
 
