@@ -3,8 +3,10 @@ import axios from "axios";
 import { IStock } from "../types";
 
 const fetchStocksList = async (): Promise<Array<IStock>> => {
-  const response = await axios.get("/stocks_list.json");
-  return response.data;
+  const response = await axios.get(
+    "https://api.twelvedata.com/stocks?source=docs&exchange=NYSE"
+  );
+  return response.data.data;
 };
 
 export const useStocksList = () => {

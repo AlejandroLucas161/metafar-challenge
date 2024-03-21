@@ -1,26 +1,40 @@
 import { FunctionComponent, useState } from "react";
-import { Grid, Typography } from "@mui/material";
+import { Grid, Skeleton, Typography } from "@mui/material";
 import { StyledButton } from "./styles";
 import { Chart, Intervals, Historical } from "./components";
 import { useStockDetails } from "../../hooks/useStockDetails";
 import { useStock } from "../../hooks/useStock";
 import { IntervalsType } from "../../types";
 import { Dayjs } from "dayjs";
+import { useParams } from "react-router-dom";
 
 export type StockVariant = "realTime" | "historical";
 
 const StockDetail: FunctionComponent = () => {
+  const { id: stockSymbol } = useParams();
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [interval, setInterval] = useState<IntervalsType>(1);
   const [variant, setVariant] = useState<StockVariant>("realTime");
-  const { data: stockDetail } = useStock();
-  const { data: stockChartDetails } = useStockDetails(interval);
+  const { data: stockDetail, isFetching: isStockDetailFetching } =
+    useStock(stockSymbol);
+  const { data: stockChartDetails } = useStockDetails({
+    symbol: stockSymbol || "",
+    interval: interval,
+    startDate: startDate || null,
+    endDate: endDate || null,
+  });
 
   const stockHeader = `${stockDetail?.name} / ${stockDetail?.symbol} / ${stockDetail?.currency}`;
 
   const handleStockVariant = (variant: StockVariant) => {
     setVariant(variant);
+  };
+
+  const handleRealtime = () => {
+    setEndDate(null);
+    setStartDate(null);
+    handleStockVariant("realTime");
   };
 
   const handleIntervalChange = (interval: IntervalsType) => {
@@ -38,13 +52,17 @@ const StockDetail: FunctionComponent = () => {
   return (
     <Grid container gap={5}>
       <Grid width="100%" display="flex" justifyContent="space-between">
-        <Typography variant="h5">{stockHeader}</Typography>
+        {isStockDetailFetching ? (
+          <Skeleton variant="rounded" width={410} height={30} />
+        ) : (
+          <Typography variant="h5">{stockHeader}</Typography>
+        )}
 
         <Grid>
           <StyledButton
             variant="contained"
             disabled={variant === "realTime"}
-            onClick={() => handleStockVariant("realTime")}
+            onClick={handleRealtime}
           >
             Tiempo Real
           </StyledButton>
@@ -81,7 +99,7 @@ const StockDetail: FunctionComponent = () => {
       </Grid>
 
       <Grid width="100%">
-        <Chart values={stockChartDetails?.values || []} />
+        <Chart symbol={stockSymbol} values={stockChartDetails?.values || []} />
       </Grid>
     </Grid>
   );

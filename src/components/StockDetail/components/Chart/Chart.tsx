@@ -4,10 +4,11 @@ import { FunctionComponent } from "react";
 import { IStockValue } from "../../../../types";
 
 type ChartProps = {
+  symbol?: string;
   values: Array<IStockValue>;
 };
 
-const Chart: FunctionComponent<ChartProps> = ({ values }) => {
+const Chart: FunctionComponent<ChartProps> = ({ symbol, values }) => {
   const data = values.map((value) => [
     new Date(value.datetime).getTime(),
     parseFloat(value.open),
@@ -19,7 +20,7 @@ const Chart: FunctionComponent<ChartProps> = ({ values }) => {
   const options = {
     // Título que aparece en la parte superior del gráfico
     title: {
-      text: "NFLX",
+      text: symbol,
     },
 
     // Remueve la leyenda
