@@ -1,30 +1,49 @@
-# React + TypeScript + Vite
+# _LiveStockCheck_
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interfaz web para graficar cotizaciones en tiempo real, desarrollado con **React TS**, **Vite**, **TypeScript**
 
-Currently, two official plugins are available:
+## Instalación Zip
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Pueden descargar el repositorio en formato zip
 
-## Expanding the ESLint configuration
+- Ir a "Code" -> "Download Zip"
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- Descomprimir el archivo
 
-- Configure the top-level `parserOptions` property like this:
+- En la carpeta donde se encuentra en "package.json" ejecutar en una terminal:
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+```
+npm install
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+- Para abrir el proyecto de manera local en el browser:
+
+```
+npm run dev
+```
+
+## Instalación Git Clone
+
+Otra manera de acceder al proyecto es clonarlo, ejecutando en la consola:
+
+```
+git clone https://github.com/AlejandroLucas161/metafar-challenge.git
+```
+
+Y ejecutar como en la manera anterior:
+
+```
+npm install
+--------------
+npm run dev
+```
+
+## Variables de Entorno
+
+Crearse una cuenta en https://twelvedata.com/ para obtener la apikey (es gratuita con 800 request por día)
+
+Crear un archivo _.env_ en la raíz del proyecto y agregar una key de la siguiente manera
+
+```
+VITE_TWELVEDATA_API_KEY=YOUR_API_KEY
+```
