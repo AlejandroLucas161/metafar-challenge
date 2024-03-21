@@ -17,8 +17,7 @@ export const StyledButton = styled(Button)<ButtonProps>(() => ({
   },
 }));
 
-export const Icon = styled("span")<{ icon: string }>`
+export const Icon = styled("img")`
   width: 32px;
   height: 32px;
-  background-image: ${({ icon }) => `url(${icon})`};
 `;

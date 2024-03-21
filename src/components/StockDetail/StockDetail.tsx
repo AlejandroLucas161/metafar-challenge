@@ -5,16 +5,24 @@ import { Chart, Intervals, Historical } from "./components";
 import candleChartIcon from "../../assets/candle-chart-icon.svg";
 import timeChartIcon from "../../assets/time-chart-icon.svg";
 
-const charts: Array<{ icon: string }> = [
-  { icon: candleChartIcon },
-  { icon: timeChartIcon },
+export type StockVariant = "realTime" | "historical";
+export type ChartType = "candlestick" | "area";
+
+const charts: Array<{ icon: string; chart: ChartType }> = [
+  { icon: candleChartIcon, chart: "candlestick" },
+  { icon: timeChartIcon, chart: "area" },
 ];
 
 const StockDetail: FunctionComponent = () => {
-  const [variant, setVariant] = useState<"realTime" | "historical">("realTime");
+  const [variant, setVariant] = useState<StockVariant>("realTime");
+  const [chartType, setChartType] = useState<ChartType>("candlestick");
 
-  const handleVariant = (variant: "realTime" | "historical") => {
+  const handleStockVariant = (variant: StockVariant) => {
     setVariant(variant);
+  };
+
+  const handleChart = (chart: ChartType) => {
+    setChartType(chart);
   };
 
   return (
@@ -26,14 +34,14 @@ const StockDetail: FunctionComponent = () => {
           <StyledButton
             variant="contained"
             disabled={variant === "realTime"}
-            onClick={() => handleVariant("realTime")}
+            onClick={() => handleStockVariant("realTime")}
           >
             Tiempo Real
           </StyledButton>
           <StyledButton
             variant="contained"
             disabled={variant === "historical"}
-            onClick={() => handleVariant("historical")}
+            onClick={() => handleStockVariant("historical")}
           >
             Histórico
           </StyledButton>
@@ -42,18 +50,20 @@ const StockDetail: FunctionComponent = () => {
 
       <Grid width="100%" display="flex" justifyContent="space-between">
         <Grid display="flex" gap={1}>
-          {charts.map(({ icon }, idx) => (
+          {charts.map(({ icon, chart }, idx) => (
             <StyledButton
               key={idx}
               variant="contained"
+              disabled={chart === chartType}
               sx={{
                 minWidth: "56px",
                 minHeight: "56px",
                 padding: "0",
                 fontSize: "18px",
               }}
+              onClick={() => handleChart(chart)}
             >
-              <Icon icon={icon} />
+              <Icon src={icon} />
             </StyledButton>
           ))}
         </Grid>
@@ -66,7 +76,7 @@ const StockDetail: FunctionComponent = () => {
       </Grid>
 
       <Grid width="100%">
-        <Chart />
+        <Chart chart={chartType} />
       </Grid>
     </Grid>
   );

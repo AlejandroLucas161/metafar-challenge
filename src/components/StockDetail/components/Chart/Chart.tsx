@@ -1,8 +1,13 @@
 import Highcharts from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
 import { FunctionComponent } from "react";
+import { ChartType } from "../../StockDetail";
 
-const TimelineChart: FunctionComponent = () => {
+type ChartProps = {
+  chart: ChartType;
+};
+
+const Chart: FunctionComponent<ChartProps> = ({ chart }) => {
   const data = [
     [1647869400000, 163.51, 166.35, 163.01, 165.38],
     [1647955800000, 165.51, 169.42, 164.91, 168.82],
@@ -163,8 +168,7 @@ const TimelineChart: FunctionComponent = () => {
     // Setea el tipo de gráfico, su nombre y los datos
     series: [
       {
-        // type: "area",
-        type: "candlestick",
+        type: chart,
         name: "Stock chart",
         color: "blue", // Color de subida de gráfico candlestick
         upColor: "red", // Color de bajada de gráfico candlestick
@@ -180,4 +184,4 @@ const TimelineChart: FunctionComponent = () => {
   );
 };
 
-export default TimelineChart;
+export default Chart;
