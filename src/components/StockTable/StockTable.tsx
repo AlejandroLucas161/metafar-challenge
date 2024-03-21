@@ -9,9 +9,10 @@ import {
   Stack,
   Autocomplete,
   Skeleton,
+  Pagination,
 } from "@mui/material";
 import { StyledTableCell, StyledTableRow, StyledTextField } from "./styles";
-import { useGetStocks } from "../../hooks/useGetStocks";
+import { useStocksList } from "../../hooks/useStocksList";
 
 const tableHeaders: Array<{ header: string }> = [
   { header: "Símbolo" },
@@ -21,7 +22,7 @@ const tableHeaders: Array<{ header: string }> = [
 ];
 
 const StockTable: FunctionComponent = () => {
-  const { data, isLoading } = useGetStocks();
+  const { data, isLoading } = useStocksList();
 
   // DELETE THIS
   const mockData = data?.slice(0, 12);
@@ -47,6 +48,7 @@ const StockTable: FunctionComponent = () => {
       <TableContainer
         sx={{
           marginTop: "8px",
+          marginBottom: "12px",
           border: "2px solid #969696",
           borderRadius: "8px",
         }}
@@ -103,6 +105,8 @@ const StockTable: FunctionComponent = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Pagination count={20} sx={{ width: "fit-content", margin: "0 auto" }} />
     </>
   );
 };
