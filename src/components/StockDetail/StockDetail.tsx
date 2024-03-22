@@ -58,6 +58,8 @@ const StockDetail: FunctionComponent = () => {
   };
 
   const handleRealtime = () => {
+    if (variant === "realTime") return;
+
     setEndDate(null);
     setStartDate(null);
     setHistorical({
@@ -79,8 +81,14 @@ const StockDetail: FunctionComponent = () => {
     setEndDate(date);
   };
 
-  const handleHistorical = () => {
+  const handleSearchHistorical = () => {
     setHistorical({ startDate, endDate });
+  };
+
+  const handleHistorical = () => {
+    if (variant === "historical") return;
+
+    handleStockVariant("historical");
   };
 
   return (
@@ -95,15 +103,15 @@ const StockDetail: FunctionComponent = () => {
         <Grid>
           <StyledButton
             variant="contained"
-            disabled={variant === "realTime"}
+            className={variant === "realTime" ? "active" : ""}
             onClick={handleRealtime}
           >
             Tiempo Real
           </StyledButton>
           <StyledButton
             variant="contained"
-            disabled={variant === "historical"}
-            onClick={() => handleStockVariant("historical")}
+            className={variant === "historical" ? "active" : ""}
+            onClick={handleHistorical}
           >
             Histórico
           </StyledButton>
@@ -122,7 +130,7 @@ const StockDetail: FunctionComponent = () => {
           <IconButton
             size="large"
             disabled={variant === "realTime"}
-            onClick={() => handleHistorical()}
+            onClick={() => handleSearchHistorical()}
           >
             <SearchIcon />
           </IconButton>

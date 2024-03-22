@@ -33,7 +33,7 @@ const Intervals: FunctionComponent<{
               padding: "0",
               fontSize: "18px",
             }}
-            disabled={interval === intervalValue}
+            className={interval === intervalValue ? "active" : ""}
             onClick={() => onIntervalChange(interval)}
           >
             {interval}

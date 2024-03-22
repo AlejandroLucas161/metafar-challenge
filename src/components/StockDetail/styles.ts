@@ -1,4 +1,4 @@
-import { Button, ButtonProps, buttonClasses, styled } from "@mui/material";
+import { Button, ButtonProps, styled } from "@mui/material";
 
 export const StyledButton = styled(Button)<ButtonProps>(() => ({
   color: "#f2f2f2",
@@ -11,7 +11,7 @@ export const StyledButton = styled(Button)<ButtonProps>(() => ({
     boxShadow: "none",
   },
 
-  [`&.${buttonClasses.disabled}`]: {
+  "&.active": {
     backgroundColor: "#7a7a7a",
     color: "#f2f2f2",
   },
