@@ -27,7 +27,7 @@ const Chart: FunctionComponent<ChartProps> = ({
       parseFloat(value.close),
     ]);
 
-    setData((prevData: Array<number[]>) => [...prevData, ...formattedData]);
+    setData(() => [...formattedData]);
   }, [values]);
 
   const options = {
