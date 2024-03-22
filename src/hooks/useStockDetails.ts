@@ -2,10 +2,12 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { IStockChart, IntervalsType } from "../types";
 import { Dayjs } from "dayjs";
+import { StockVariant } from "../components/StockDetail/StockDetail";
 
 const API_KEY = import.meta.env.VITE_TWELVEDATA_API_KEY;
 
 type fetchStockDetailsParams = {
+  variant: StockVariant;
   symbol: string;
   interval: IntervalsType;
   startDate: Dayjs | null;
@@ -34,7 +36,7 @@ const fetchStockDetails = async (
 };
 
 export const useStockDetails = (params: fetchStockDetailsParams) => {
-  const { symbol, startDate, endDate, interval } = params;
+  const { variant, symbol, startDate, endDate, interval } = params;
 
   let queryKey = `${symbol}-${interval}min`;
 
@@ -45,6 +47,6 @@ export const useStockDetails = (params: fetchStockDetailsParams) => {
   return useQuery<IStockChart>({
     queryKey: [queryKey],
     queryFn: () => fetchStockDetails(params),
-    refetchInterval: !startDate && !endDate && interval * (60 * 1000),
+    refetchInterval: variant === "realTime" && interval * (60 * 1000),
   });
 };

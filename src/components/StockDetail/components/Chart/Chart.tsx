@@ -1,6 +1,6 @@
 import Highcharts from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
-import { FunctionComponent } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { IStockValue, IntervalsType } from "../../../../types";
 
 type ChartProps = {
@@ -16,13 +16,19 @@ const Chart: FunctionComponent<ChartProps> = ({
   currency,
   values,
 }) => {
-  const data = values.map((value) => [
-    new Date(value.datetime).getTime(),
-    parseFloat(value.open),
-    parseFloat(value.high),
-    parseFloat(value.low),
-    parseFloat(value.close),
-  ]);
+  const [data, setData] = useState<Array<number[]>>([]);
+
+  useEffect(() => {
+    const formattedData = values.map((value) => [
+      new Date(value.datetime).getTime(),
+      parseFloat(value.open),
+      parseFloat(value.high),
+      parseFloat(value.low),
+      parseFloat(value.close),
+    ]);
+
+    setData((prevData: Array<number[]>) => [...prevData, ...formattedData]);
+  }, [values]);
 
   const options = {
     // Título que aparece en la parte superior del gráfico
@@ -53,7 +59,7 @@ const Chart: FunctionComponent<ChartProps> = ({
         formatter: function (
           this: Highcharts.AxisLabelsFormatterContextObject
         ) {
-          return Highcharts.dateFormat("%d %m %H:%M", +this.value); // Formato personalizado, puedes cambiarlo según tus necesidades
+          return Highcharts.dateFormat("%d %m %H:%M", +this.value);
         },
       },
       tickInterval: interval * (60 * 1000),
@@ -63,7 +69,16 @@ const Chart: FunctionComponent<ChartProps> = ({
     tooltip: {
       formatter(this: { x: number; y: number }) {
         const formattedDate = Highcharts.dateFormat("%d-%m %H:%M", this.x);
-        return `<b>${formattedDate}</b><br/>${symbol}: ${this.y} ${currency}`;
+        return `<b>${formattedDate}</b><br/><b>${symbol}:</b> ${this.y} ${currency}`;
+      },
+    },
+    plotOptions: {
+      series: {
+        states: {
+          hover: {
+            enabled: true,
+          },
+        },
       },
     },
 
@@ -72,8 +87,12 @@ const Chart: FunctionComponent<ChartProps> = ({
       {
         type: "line",
         name: `${symbol} stock`,
-        color: "#00CA73", // Color de subida de gráfico candlestick
+        color: "#00CA73", // Color del grafico
         data: data,
+        lineWidth: 2,
+        marker: {
+          enabled: false,
+        },
       },
     ],
   };

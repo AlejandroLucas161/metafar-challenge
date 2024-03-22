@@ -7,25 +7,41 @@ import { useStock } from "../../hooks/useStock";
 import { IntervalsType } from "../../types";
 import { Dayjs } from "dayjs";
 import { useParams } from "react-router-dom";
+import { IconButton } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 
 export type StockVariant = "realTime" | "historical";
+export type DateTypes = Dayjs | null;
+interface IHistorical {
+  startDate: DateTypes;
+  endDate: DateTypes;
+}
 
 const StockDetail: FunctionComponent = () => {
   const { id: stockSymbol } = useParams();
-  const [startDate, setStartDate] = useState<Dayjs | null>(null);
-  const [endDate, setEndDate] = useState<Dayjs | null>(null);
-  const [interval, setInterval] = useState<IntervalsType>(1);
+  const [startDate, setStartDate] = useState<DateTypes>(null);
+  const [endDate, setEndDate] = useState<DateTypes>(null);
+  const [historical, setHistorical] = useState<IHistorical>({
+    startDate: null,
+    endDate: null,
+  });
+  const [interval, setInterval] = useState<IntervalsType>(5);
   const [variant, setVariant] = useState<StockVariant>("realTime");
   const { data: stockDetail, isFetching: isStockDetailFetching } =
     useStock(stockSymbol);
   const { data: stockChartDetails } = useStockDetails({
+    variant: variant,
     symbol: stockSymbol || "",
     interval: interval,
-    startDate: startDate || null,
-    endDate: endDate || null,
+    startDate: historical?.startDate || null,
+    endDate: historical?.endDate || null,
   });
 
   const stockHeader = `${stockDetail?.name} / ${stockDetail?.symbol} / ${stockDetail?.currency}`;
+
+  const showChart =
+    variant === "realTime" ||
+    (variant === "historical" && historical?.startDate && historical?.endDate);
 
   const handleStockVariant = (variant: StockVariant) => {
     setVariant(variant);
@@ -34,6 +50,10 @@ const StockDetail: FunctionComponent = () => {
   const handleRealtime = () => {
     setEndDate(null);
     setStartDate(null);
+    setHistorical({
+      startDate: null,
+      endDate: null,
+    });
     handleStockVariant("realTime");
   };
 
@@ -41,12 +61,16 @@ const StockDetail: FunctionComponent = () => {
     setInterval(interval);
   };
 
-  const handleStartDateChange = (date: Dayjs | null) => {
+  const handleStartDateChange = (date: DateTypes) => {
     setStartDate(date);
   };
 
-  const handleEndDateChange = (date: Dayjs | null) => {
+  const handleEndDateChange = (date: DateTypes) => {
     setEndDate(date);
+  };
+
+  const handleHistorical = () => {
+    setHistorical({ startDate, endDate });
   };
 
   return (
@@ -85,6 +109,14 @@ const StockDetail: FunctionComponent = () => {
         </Grid>
 
         <Grid gap={1}>
+          <IconButton
+            size="large"
+            disabled={variant === "realTime"}
+            onClick={() => handleHistorical()}
+          >
+            <SearchIcon />
+          </IconButton>
+
           <Historical
             startDateValue={startDate}
             onStartDateChange={handleStartDateChange}
@@ -96,12 +128,14 @@ const StockDetail: FunctionComponent = () => {
       </Grid>
 
       <Grid width="100%">
-        <Chart
-          interval={interval}
-          symbol={stockSymbol || ""}
-          currency={stockDetail?.currency || ""}
-          values={stockChartDetails?.values || []}
-        />
+        {showChart && (
+          <Chart
+            interval={interval}
+            symbol={stockSymbol || ""}
+            currency={stockDetail?.currency || ""}
+            values={stockChartDetails?.values || []}
+          />
+        )}
       </Grid>
     </Grid>
   );
