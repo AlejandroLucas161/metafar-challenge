@@ -25,11 +25,19 @@ const StockDetail: FunctionComponent = () => {
     startDate: null,
     endDate: null,
   });
-  const [interval, setInterval] = useState<IntervalsType>(5);
+  const [interval, setInterval] = useState<IntervalsType>(1);
   const [variant, setVariant] = useState<StockVariant>("realTime");
-  const { data: stockDetail, isFetching: isStockDetailFetching } =
-    useStock(stockSymbol);
-  const { data: stockChartDetails } = useStockDetails({
+  const {
+    data: stockDetail,
+    isFetching: isStockDetailFetching,
+    isError: isStockError,
+    error: stockError,
+  } = useStock(stockSymbol);
+  const {
+    data: stockChartDetails,
+    isError: isStockChartDetailsError,
+    error: stockChartDetailsError,
+  } = useStockDetails({
     variant: variant,
     symbol: stockSymbol || "",
     interval: interval,
@@ -37,7 +45,9 @@ const StockDetail: FunctionComponent = () => {
     endDate: historical?.endDate || null,
   });
 
-  const stockHeader = `${stockDetail?.name} / ${stockDetail?.symbol} / ${stockDetail?.currency}`;
+  const stockHeader = isStockError
+    ? stockError.message || "Error desconocido"
+    : `${stockDetail?.name} / ${stockDetail?.symbol} / ${stockDetail?.currency}`;
 
   const showChart =
     variant === "realTime" ||
@@ -135,6 +145,10 @@ const StockDetail: FunctionComponent = () => {
             currency={stockDetail?.currency || ""}
             values={stockChartDetails?.values || []}
           />
+        )}
+
+        {isStockChartDetailsError && (
+          <div>{stockChartDetailsError.message || "Error desconocido"}</div>
         )}
       </Grid>
     </Grid>

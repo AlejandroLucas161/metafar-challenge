@@ -1,4 +1,10 @@
-import { ChangeEvent, FunctionComponent, useMemo, useState } from "react";
+import {
+  ChangeEvent,
+  FunctionComponent,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { Link } from "react-router-dom";
 import {
   Table,
@@ -22,9 +28,13 @@ const tableHeaders: Array<{ header: string }> = [
 ];
 
 const StockTable: FunctionComponent = () => {
-  const { data = [], isLoading } = useStocksList();
+  const { data = [], isLoading, isError, error } = useStocksList();
   const [page, setPage] = useState<number>(1);
   const [query, setQuery] = useState<string>("");
+
+  useEffect(() => {
+    setPage(1);
+  }, [query]);
 
   const filteredStocks = useMemo(
     () => (data ? getFilteredStocks(data, query) : []),
@@ -46,6 +56,25 @@ const StockTable: FunctionComponent = () => {
   const renderedStocks = useMemo(() => {
     return filteredStocks.slice(tableStarts, tableEnds);
   }, [filteredStocks, tableStarts, tableEnds]);
+
+  const tableJSX = isError ? (
+    <StyledTableRow>
+      <StyledTableCell colSpan={4}>
+        {error?.message || "Error desconocido"}
+      </StyledTableCell>
+    </StyledTableRow>
+  ) : (
+    renderedStocks?.map(({ symbol, name, currency, type, mic_code }) => (
+      <StyledTableRow key={mic_code + symbol}>
+        <StyledTableCell align="left">
+          <Link to={`/detail/${symbol}`}>{symbol}</Link>
+        </StyledTableCell>
+        <StyledTableCell align="left">{name}</StyledTableCell>
+        <StyledTableCell align="left">{currency}</StyledTableCell>
+        <StyledTableCell align="left">{type}</StyledTableCell>
+      </StyledTableRow>
+    ))
+  );
 
   const handlePage = (_: ChangeEvent<unknown>, page: number) => {
     setPage(page);
@@ -108,23 +137,12 @@ const StockTable: FunctionComponent = () => {
                       </StyledTableCell>
                     </StyledTableRow>
                   ))
-              : renderedStocks?.map(
-                  ({ symbol, name, currency, type, mic_code }) => (
-                    <StyledTableRow key={mic_code + symbol}>
-                      <StyledTableCell align="left">
-                        <Link to={`/detail/${symbol}`}>{symbol}</Link>
-                      </StyledTableCell>
-                      <StyledTableCell align="left">{name}</StyledTableCell>
-                      <StyledTableCell align="left">{currency}</StyledTableCell>
-                      <StyledTableCell align="left">{type}</StyledTableCell>
-                    </StyledTableRow>
-                  )
-                )}
+              : tableJSX}
           </TableBody>
         </Table>
       </TableContainer>
 
-      {count && (
+      {count && count > 1 && (
         <Pagination
           count={count}
           onChange={handlePage}

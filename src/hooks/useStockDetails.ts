@@ -17,7 +17,11 @@ type fetchStockDetailsParams = {
 const fetchStockDetails = async (
   params: fetchStockDetailsParams
 ): Promise<IStockChart> => {
-  const { symbol, interval, startDate, endDate } = params;
+  const { variant, symbol, interval, startDate, endDate } = params;
+
+  if (variant === "historical" && (!startDate || !endDate))
+    return new Promise(() => []);
+
   const urlParams = new URLSearchParams();
   urlParams.set("symbol", symbol);
   urlParams.set("interval", `${interval}min`);
@@ -29,10 +33,16 @@ const fetchStockDetails = async (
 
   urlParams.set("apikey", API_KEY);
 
-  const response = await axios.get(
-    `https://api.twelvedata.com/time_series?outputsize=15&${urlParams.toString()}`
-  );
-  return response.data;
+  try {
+    const response = await axios.get(
+      `https://api.twelvedata.com/time_series?outputsize=15&${urlParams.toString()}`
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      "Hubo un error al intentar obtener los detalles de la gráfica de la acción."
+    );
+  }
 };
 
 export const useStockDetails = (params: fetchStockDetailsParams) => {
