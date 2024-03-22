@@ -1,14 +1,21 @@
 import Highcharts from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
 import { FunctionComponent } from "react";
-import { IStockValue } from "../../../../types";
+import { IStockValue, IntervalsType } from "../../../../types";
 
 type ChartProps = {
-  symbol?: string;
+  interval: IntervalsType;
+  symbol: string;
+  currency: string;
   values: Array<IStockValue>;
 };
 
-const Chart: FunctionComponent<ChartProps> = ({ symbol, values }) => {
+const Chart: FunctionComponent<ChartProps> = ({
+  interval,
+  symbol,
+  currency,
+  values,
+}) => {
   const data = values.map((value) => [
     new Date(value.datetime).getTime(),
     parseFloat(value.open),
@@ -28,25 +35,44 @@ const Chart: FunctionComponent<ChartProps> = ({ symbol, values }) => {
       enabled: false,
     },
 
-    // Remueve el label del eje Y
+    // Personalizar eje Y
     yAxis: {
       title: {
         text: null,
       },
+
+      labels: {
+        format: "{text} " + currency,
+      },
     },
 
-    // Remueve los tooltips del gráfico
+    // Personalizar eje X
+    xAxis: {
+      type: "datetime",
+      labels: {
+        formatter: function (
+          this: Highcharts.AxisLabelsFormatterContextObject
+        ) {
+          return Highcharts.dateFormat("%d %m %H:%M", +this.value); // Formato personalizado, puedes cambiarlo según tus necesidades
+        },
+      },
+      tickInterval: interval * (60 * 1000),
+    },
+
+    // Personalizar tooltip
     tooltip: {
-      enabled: false,
+      formatter(this: { x: number; y: number }) {
+        const formattedDate = Highcharts.dateFormat("%d-%m %H:%M", this.x);
+        return `<b>${formattedDate}</b><br/>${symbol}: ${this.y} ${currency}`;
+      },
     },
 
     // Setea el tipo de gráfico, su nombre y los datos
     series: [
       {
         type: "line",
-        name: "Stock chart",
+        name: `${symbol} stock`,
         color: "#00CA73", // Color de subida de gráfico candlestick
-        upColor: "#FF6960", // Color de bajada de gráfico candlestick
         data: data,
       },
     ],

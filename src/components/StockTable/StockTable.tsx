@@ -1,4 +1,4 @@
-import { ChangeEvent, FunctionComponent, useState } from "react";
+import { ChangeEvent, FunctionComponent, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Table,
@@ -12,6 +12,7 @@ import {
 import { StyledTableCell, StyledTableRow } from "./styles";
 import { useStocksList } from "../../hooks/useStocksList";
 import StockAutocomplete from "./StockAutocomplete/StockAutocomplete";
+import { getFilteredStocks } from "./StockTable.helpers";
 
 const tableHeaders: Array<{ header: string }> = [
   { header: "Símbolo" },
@@ -21,20 +22,30 @@ const tableHeaders: Array<{ header: string }> = [
 ];
 
 const StockTable: FunctionComponent = () => {
-  const { data, isLoading } = useStocksList();
+  const { data = [], isLoading } = useStocksList();
   const [page, setPage] = useState<number>(1);
+  const [query, setQuery] = useState<string>("");
+
+  const filteredStocks = useMemo(
+    () => (data ? getFilteredStocks(data, query) : []),
+    [data, query]
+  );
 
   const limit = 12;
-  const count = !!data?.length && Math.ceil(data?.length / 12);
+  const count =
+    !!filteredStocks?.length && Math.ceil(filteredStocks?.length / limit);
 
-  const autocompleteList = data?.map((stock) => ({
+  const autocompleteList = filteredStocks?.map((stock) => ({
     label: stock.name,
     id: stock.symbol,
   }));
 
   const tableEnds = page * limit;
   const tableStarts = tableEnds - limit;
-  const stocks = data?.slice(tableStarts, tableEnds);
+
+  const renderedStocks = useMemo(() => {
+    return filteredStocks.slice(tableStarts, tableEnds);
+  }, [filteredStocks, tableStarts, tableEnds]);
 
   const handlePage = (_: ChangeEvent<unknown>, page: number) => {
     setPage(page);
@@ -43,7 +54,11 @@ const StockTable: FunctionComponent = () => {
   return (
     <>
       {/* INPUT */}
-      <StockAutocomplete options={autocompleteList} />
+      <StockAutocomplete
+        query={query}
+        onQueryChange={(newQuery) => setQuery(newQuery)}
+        options={autocompleteList}
+      />
 
       {/* TABLE */}
       <TableContainer
@@ -93,16 +108,18 @@ const StockTable: FunctionComponent = () => {
                       </StyledTableCell>
                     </StyledTableRow>
                   ))
-              : stocks?.map(({ symbol, name, currency, type, mic_code }) => (
-                  <StyledTableRow key={mic_code + symbol}>
-                    <StyledTableCell align="left">
-                      <Link to={`/detail/${symbol}`}>{symbol}</Link>
-                    </StyledTableCell>
-                    <StyledTableCell align="left">{name}</StyledTableCell>
-                    <StyledTableCell align="left">{currency}</StyledTableCell>
-                    <StyledTableCell align="left">{type}</StyledTableCell>
-                  </StyledTableRow>
-                ))}
+              : renderedStocks?.map(
+                  ({ symbol, name, currency, type, mic_code }) => (
+                    <StyledTableRow key={mic_code + symbol}>
+                      <StyledTableCell align="left">
+                        <Link to={`/detail/${symbol}`}>{symbol}</Link>
+                      </StyledTableCell>
+                      <StyledTableCell align="left">{name}</StyledTableCell>
+                      <StyledTableCell align="left">{currency}</StyledTableCell>
+                      <StyledTableCell align="left">{type}</StyledTableCell>
+                    </StyledTableRow>
+                  )
+                )}
           </TableBody>
         </Table>
       </TableContainer>

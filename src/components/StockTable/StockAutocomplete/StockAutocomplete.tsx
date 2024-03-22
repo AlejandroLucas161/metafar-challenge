@@ -1,26 +1,29 @@
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent } from "react";
 import { Autocomplete, Stack } from "@mui/material";
 import { StyledTextField } from "../styles";
 
 type StockAutocompleteProps = {
+  query: string;
+  onQueryChange: (newQuery: string) => void;
   options?: Array<{ label: string; id: string }>;
 };
 
-const StockAutocomplete = ({ options }: StockAutocompleteProps) => {
-  const [query, setQuery] = useState<string>("");
-
+const StockAutocomplete = ({
+  query,
+  onQueryChange,
+  options,
+}: StockAutocompleteProps) => {
   const handleAutocomplete = (
     _: SyntheticEvent<Element, Event>,
     value: string
   ) => {
-    setQuery(value);
+    onQueryChange(value);
   };
 
   return (
     <Stack spacing={2} sx={{ width: "100%" }}>
       <Autocomplete
         freeSolo
-        open={!!query?.length}
         inputValue={query}
         onInputChange={handleAutocomplete}
         options={options || []}

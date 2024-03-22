@@ -28,16 +28,22 @@ const fetchStockDetails = async (
   urlParams.set("apikey", API_KEY);
 
   const response = await axios.get(
-    `https://api.twelvedata.com/time_series?${urlParams.toString()}`
+    `https://api.twelvedata.com/time_series?outputsize=15&${urlParams.toString()}`
   );
   return response.data;
 };
 
 export const useStockDetails = (params: fetchStockDetailsParams) => {
-  const { startDate, endDate, interval } = params;
+  const { symbol, startDate, endDate, interval } = params;
+
+  let queryKey = `${symbol}-${interval}min`;
+
+  if (startDate && endDate) {
+    queryKey += `-${startDate.format()}-${endDate.format()}`;
+  }
 
   return useQuery<IStockChart>({
-    queryKey: ["stock_details"],
+    queryKey: [queryKey],
     queryFn: () => fetchStockDetails(params),
     refetchInterval: !startDate && !endDate && interval * (60 * 1000),
   });

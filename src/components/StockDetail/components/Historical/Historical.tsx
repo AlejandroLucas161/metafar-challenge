@@ -8,6 +8,7 @@ type HistoricalProps = {
   onStartDateChange: (date: Dayjs | null) => void;
   endDateValue: Dayjs | null;
   onEndDateChange: (date: Dayjs | null) => void;
+  disableHistorical?: boolean;
 };
 
 const Historical: FunctionComponent<HistoricalProps> = ({
@@ -15,6 +16,7 @@ const Historical: FunctionComponent<HistoricalProps> = ({
   onStartDateChange,
   endDateValue,
   onEndDateChange,
+  disableHistorical,
 }) => {
   return (
     <>
@@ -25,6 +27,7 @@ const Historical: FunctionComponent<HistoricalProps> = ({
           maxDate={endDateValue}
           format="DD/MM/YYYY hh:mm A"
           onChange={(date) => onStartDateChange(date)}
+          disabled={disableHistorical}
         />
 
         <DateTimePicker
@@ -33,6 +36,7 @@ const Historical: FunctionComponent<HistoricalProps> = ({
           minDate={startDateValue}
           format="DD/MM/YYYY hh:mm A"
           onChange={(date) => onEndDateChange(date)}
+          disabled={disableHistorical}
         />
       </LocalizationProvider>
     </>

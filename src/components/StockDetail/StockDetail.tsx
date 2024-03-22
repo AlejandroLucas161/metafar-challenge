@@ -77,29 +77,31 @@ const StockDetail: FunctionComponent = () => {
       </Grid>
 
       <Grid width="100%" display="flex" justifyContent="space-between">
-        <Grid display="flex" gap={1}></Grid>
+        <Grid display="flex" gap={1}>
+          <Intervals
+            intervalValue={interval}
+            onIntervalChange={handleIntervalChange}
+          />
+        </Grid>
 
-        <Grid>
-          {variant === "realTime" && (
-            <Intervals
-              intervalValue={interval}
-              onIntervalChange={handleIntervalChange}
-            />
-          )}
-
-          {variant === "historical" && (
-            <Historical
-              startDateValue={startDate}
-              onStartDateChange={handleStartDateChange}
-              endDateValue={endDate}
-              onEndDateChange={handleEndDateChange}
-            />
-          )}
+        <Grid gap={1}>
+          <Historical
+            startDateValue={startDate}
+            onStartDateChange={handleStartDateChange}
+            endDateValue={endDate}
+            onEndDateChange={handleEndDateChange}
+            disableHistorical={variant === "realTime"}
+          />
         </Grid>
       </Grid>
 
       <Grid width="100%">
-        <Chart symbol={stockSymbol} values={stockChartDetails?.values || []} />
+        <Chart
+          interval={interval}
+          symbol={stockSymbol || ""}
+          currency={stockDetail?.currency || ""}
+          values={stockChartDetails?.values || []}
+        />
       </Grid>
     </Grid>
   );
